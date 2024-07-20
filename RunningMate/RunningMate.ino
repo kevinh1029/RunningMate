@@ -34,8 +34,9 @@ void loop() {
 }
 
 void displayCoords(void) {
-  display.println(coordinates[0]);
-  display.println(coordinates[1]);
+  display.println(coordinates[0], 5);
+  display.println(coordinates[1], 5);
+
   display.display();
   delay(1000);
   display.clearDisplay();
@@ -48,7 +49,7 @@ void initDisplay(void)  {
   }
   delay(2000);
   display.clearDisplay();
-  display.setTextSIze
+  display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0, 10);
 }
@@ -89,27 +90,23 @@ void getCoords(char in[MAX_SIZE+1])  {
   latitude = strtod(latBuf, NULL);
   longitude = strtod(lngBuf, NULL); 
 
-  latitude = convertCoords(latitude, 1);
-  longitude = convertCoords(longitude, 0);
+  latitude = convertCoords(latitude);
+  longitude = convertCoords(longitude);
 
   if (ns == 'S')  {
-    latitude *= -1;
+    latitude *= -1.0;
   }
   if (ew == 'W')  {
-    longitude *= -1;
+    longitude *= -1.0;
   }
-
-  // Serial.print(latitude);
-  // Serial.print(", ");
-  // Serial.println(longitude);
+  
   coordinates[0] = latitude;
   coordinates[1] = longitude;
 }
 
-int convertCoords(int latLng, bool lat)  {
-  int place = lat ? 100 : 1000;
-  int minutesCorrected = (latLng % place) / 60;
-  int degrees = (latLng / place) * place;
+double convertCoords(double latLng)  {
+  double minutesCorrected = ((int)(latLng*100000) % 10000000) / 6000000.0;
+  int degrees = latLng / 100;
   
   return degrees + minutesCorrected;
 }
